@@ -49,7 +49,7 @@ client.on("interactionCreate", async (interaction) => {
     }
 
     if (interaction.isButton()) { }
-    if (interaction.isSelectMenu()) {
+    if (interaction.isStringSelectMenu()) {
         const cmd = client.selectMenus.get(interaction.customId)
         if (!cmd) return interaction.reply({ content: "😕 Seçim yaptığınız menü sistemde bulunmamaktadır.", ephemeral: true })
         interaction.member = interaction.guild.members.cache.get(interaction.user.id)

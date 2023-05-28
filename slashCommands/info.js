@@ -1,4 +1,4 @@
-const { currentTime } = require("../server")
+const { currentTime, config } = require("../server")
 const { EmbedBuilder, ApplicationCommandType } = require("discord.js")
 
 module.exports = {
@@ -7,7 +7,7 @@ module.exports = {
     name: "bilgi",
     description: "Discord botuna ait bilgileri gösterir.",
     run: async (client, interaction, args) => {
-        let embed = new EmbedBuilder().setColor("#FF00FF").setFooter({ text: "drizzlydeveloper.xyz" })
+        let embed = new EmbedBuilder().setColor("#FF00FF").setFooter({ text: config.embedFooter })
             .setThumbnail(client.user.displayAvatarURL())
             .addFields(
                 {

@@ -4,7 +4,7 @@ client.on('ready', async () => {
     await stream()
     let activityes = [
         { text: "/help", waitSecond: 8 },
-        { text: "drizzlydeveloper.xyz", waitSecond: 5 }
+        { text: "radio.cihatksm.com", waitSecond: 5 }
     ]
 
     await setActivity(activityes, 0)

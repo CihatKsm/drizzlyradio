@@ -1,4 +1,4 @@
-const { Models } = require("../server")
+const { Models, config } = require("../server")
 const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType } = require("discord.js")
 
 module.exports = {
@@ -43,7 +43,7 @@ module.exports = {
         }
     ],
     run: async (client, interaction, args) => {
-        let embed = new EmbedBuilder().setColor(0xff00ff).setFooter({ text: `drizzlydeveloper.xyz` })
+        let embed = new EmbedBuilder().setColor(0xff00ff).setFooter({ text: config.embedFooter })
         let dj = interaction.options.get("kullanıcı")
         let data = await Models.connections.findOne({ guildId: interaction.guildId })
         let dataDjs = data.diskJokeys

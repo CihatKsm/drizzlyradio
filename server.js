@@ -6,20 +6,15 @@ const client = new Client({
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.DirectMessageReactions,
         GatewayIntentBits.DirectMessageTyping,
-        GatewayIntentBits.GuildBans,
         GatewayIntentBits.GuildEmojisAndStickers,
         GatewayIntentBits.GuildIntegrations,
-        GatewayIntentBits.GuildInvites,
-        GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.GuildMessageTyping,
         GatewayIntentBits.GuildScheduledEvents,
-        GatewayIntentBits.GuildPresences,
         GatewayIntentBits.GuildVoiceStates,
         GatewayIntentBits.GuildWebhooks,
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.MessageContent
+        GatewayIntentBits.Guilds
     ], partials: [
         Partials.User,
         Partials.Channel,
@@ -43,7 +38,7 @@ require("dayjs").locale('tr')
 
 const currentTime = (format, date) => DayJs(date ? date : null).tz('Asia/Istanbul').format(format)
 const Player = new DiscordPLayer.Player(client, { ytdlOptions: { quality: "highestaudio", highWaterMark: 1 << 25 } })
-const config = fs.existsSync(path.join(__dirname, "../config.js")) ? require("../config") : process.env
+const config = require("./config");
 
 client.slashCommands = new Collection()
 client.selectMenus = new Collection()
@@ -54,7 +49,8 @@ fs.readdir("./events/", (e, f) => e ? log(e, true) : f.forEach(ff => require(`./
 client.on("warn", e => log(e, true))
 client.on("error", e => log(e, true))
 
-mongoose.connect(config.mongoURL + "/drizzlyradio-test", { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.set('strictQuery', true);
+mongoose.connect(config.mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log(`✅ MongoDB: ${mongoose?.connections[0]?.name}`))
     .then(() => discordConnect())
     .catch(() => console.log("❎ MongoDB: Not Connection"))

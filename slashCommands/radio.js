@@ -1,5 +1,6 @@
 const { EmbedBuilder, SelectMenuBuilder, ActionRowBuilder, ApplicationCommandType, ApplicationCommandOptionType } = require("discord.js")
 const youtubeSearch = require('yt-search')
+const { config } = require("../server")
 
 module.exports = {
     type: ApplicationCommandType.ChatInput,
@@ -33,7 +34,7 @@ module.exports = {
         
         let ActionRow = new ActionRowBuilder().addComponents(stationMenu)
 
-        let embed = new EmbedBuilder().setColor(0xff00ff).setFooter({ text: `drizzlydeveloper.xyz` })
+        let embed = new EmbedBuilder().setColor(0xff00ff).setFooter({ text: config.embedFooter })
             .setDescription(
                 `Arama sonucu aşağıdaki menüde listelenmiştir. \n` +
                 `Bağlanmak istediğinizi radyo istasyonunu menüden seçiniz.`

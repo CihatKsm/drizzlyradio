@@ -1,4 +1,4 @@
-const { Models, stream, log } = require("../server")
+const { Models, stream, log, config } = require("../server")
 const { EmbedBuilder } = require("discord.js")
 const youtubeSearch = require('yt-search')
 
@@ -19,7 +19,7 @@ module.exports = {
             .setAuthor({ name: live.author.name, url: live.author.url })
             .setDescription(live.description)
             .setThumbnail(live.thumbnail)
-            .setFooter({ text: `drizzlydeveloper.xyz` })
+            .setFooter({ text: config.embedFooter })
 
 
         serverModel.voiceChannelId = userChannel.id
