@@ -102,10 +102,9 @@ async function stream(guildId) {
                 if (channel) {
                     let channelClient = guildClient?.channels.cache.get(channel)
                     let meChannelClient = guildClient?.me?.voice.channel
-                    let queue = await Player.getQueue(guildClient, { metadata: meChannelClient })
-                    if (queue) await queue.skip()
-                    if (!meChannelClient || meChannelClient && meChannelClient.id !== serverModel.voiceChannelId)
-                        await Player.deleteQueue(guildClient, { metadata: channelClient })
+                    let queue = Player.nodes.get(guildClient, { metadata: meChannelClient })
+                    if (queue) queue.node.skip()
+                    ///if (!meChannelClient || meChannelClient && meChannelClient.id !== serverModel.voiceChannelId) queue.delete();
                     return run(serverModel, guildClient, channelClient, meChannelClient, queue)
                 }
             }
@@ -116,15 +115,15 @@ async function stream(guildId) {
     let guildClient = client.guilds.cache.get(guildId)
     let channelClient = guildClient?.channels.cache.get(guildData?.voiceChannelId)
     let meChannelClient = guildClient?.me?.voice?.channel
-    let queue = meChannelClient ? await Player.getQueue(guildClient, { metadata: meChannelClient }) : null
+    let queue = meChannelClient ? Player.nodes.get(guildClient, { metadata: meChannelClient }) : null
 
     if (!guildData || !guildClient) return;
 
-    if (!channelClient && queue) await queue.skip()
+    if (!channelClient && queue) queue.node.skip()
     if (!channelClient) return;
 
-    if (!meChannelClient || meChannelClient && meChannelClient.id !== guildData.voiceChannelId)
-        await Player.deleteQueue(guildClient, { metadata: channelClient })
+    // if (!meChannelClient || meChannelClient && meChannelClient.id !== guildData.voiceChannelId)
+    //     await Player.deleteQueue(guildClient, { metadata: channelClient })
 
     if (guildData.voiceChannelId && guildData.radioURL)
         return run(guildData, guildClient, channelClient, meChannelClient, queue)
@@ -135,23 +134,23 @@ async function run(guildData, guildClient, channelClient, meChannelClient, queue
     try {
         let lastUse = guildData?.usedCommands?.filter(f => f.name == "radyo").reverse()[0]
         let liveCode = guildData?.radioURL.slice(32, 99)
-        let getQueue = await Player.getQueue(guildClient, { metadata: channelClient })
-        let getTracks = getQueue?.player?.getQueue(guildClient, { metadata: channelClient })?.previousTracks
-        let radioPlaying = getQueue?.player?.getQueue(guildClient, { metadata: channelClient })?.playing
+        let getQueue = Player.nodes.get(guildClient, { metadata: channelClient })
+        let getTracks = getQueue?.player?.nodes.get(guildClient, { metadata: channelClient })?.previousTracks
+        let radioPlaying = getQueue?.player?.nodes.get(guildClient, { metadata: channelClient })?.playing
 
         if (meChannelClient?.id == guildData?.voiceChannelId && (getTracks && getTracks[0]?.url == guildData?.radioURL)) return;
 
-        if (getTracks && getTracks[0]) {
-            await Player.deleteQueue(guildClient, { metadata: channelClient })
-            return run(guildData, guildClient, channelClient, meChannelClient, queue)
-        }
+        // if (getTracks && getTracks[0]) {
+        //     await Player.deleteQueue(guildClient, { metadata: channelClient })
+        //     return run(guildData, guildClient, channelClient, meChannelClient, queue)
+        // }
 
         let searchObj = { requestedBy: lastUse.userId, searchEngine: DiscordPLayer.QueryType.AUTO }
         let searchResult = await Player.search(liveCode, searchObj)
         let RadioLive = searchResult.tracks.filter(f => f.duration == "0:00")
 
         if (radioPlaying !== true) {
-            let Radio = await Player.createQueue(guildClient, { metadata: channelClient })
+            let Radio = await Player.play(guildClient, { metadata: channelClient })
             await Radio.connect(channelClient)
             await Radio.addTrack(RadioLive[0])
             await Radio.play()
